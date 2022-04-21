@@ -75,6 +75,10 @@
 		}
 		.modalContent div {
 			padding: 5px;
+			margin-bottom: 1px;
+		}
+		.marked {
+			background-color: #fff325;
 		}
 	</style>
 <h1>Botpress QNA Duplicate Finder</h1>
@@ -87,12 +91,18 @@ Copyright by Frank Dase (2022)<br/><br/>
 	<div class="modalContent"></div>
 </div>
 <script>
+
+	// -----------------------------------------------
+	// global variables
+	// -----------------------------------------------
 	const modal = document.getElementById('modal');
 	let questionsArray = [];
+	let resultsArray = [];
+
 	const pickDoublicates = async (json) => {
 		const container = document.getElementById("output");
 		questionsArray = [];
-		const resultsArray = [];
+		resultsArray = [];
 		
 		
 		let count = 0;
@@ -188,11 +198,14 @@ Copyright by Frank Dase (2022)<br/><br/>
 			
 			if(item.id == id)
 			{
-				console.log(item.id, id);
-				console.log("equal");
 				item.questions.map(question => {
-					console.log(question);
-					modalContent[0].innerHTML += `<div>${question}</div>`;
+					const qIndex = resultsArray.findIndex(e => e.question == question);
+					if(qIndex > -1)
+					{
+						modalContent[0].innerHTML += `<div class='marked'>${question}</div>`;
+					} else {
+						modalContent[0].innerHTML += `<div>${question}</div>`;
+					}
 					
 				});
 			}
