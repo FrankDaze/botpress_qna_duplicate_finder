@@ -28,11 +28,53 @@
 			background:  #2d76b3;
 			color:  #fff;
 			font-weight: bold;
+			cursor:  pointer;
 		}
 		.question {
 			display:  block;
 			padding:  6px;
 
+		}
+		#modal {
+			position:  absolute;
+			width:  200px;
+			height:  300px;
+			border:  1px solid black;
+			background-color:  #ccc;
+			display:  block;
+			z-index: 100;
+			top: 0;
+   			left: 0;
+		}
+		.modalHeader {
+			display:  block;
+			background-color:  #333;
+			font-size: 14px;
+			height: 27px;
+
+		}
+		.modalHeader .modalClose {
+			float: right;
+			font-weight: bold;
+			cursor: pointer;
+			background-color:  #666;
+			padding:  5px;
+		}
+		.modalHeader .modalTitle {
+			width: 92%;
+		    overflow-x: hidden;
+		    display: block;
+		    padding:  5px;
+		}
+		.modalContent {
+			display: block;
+			color:  #333;
+			font-size:  13px;
+			height: 91%;
+    		overflow-y: scroll;
+		}
+		.modalContent div {
+			padding: 5px;
 		}
 	</style>
 <h1>Botpress QNA Duplicate Finder</h1>
@@ -40,13 +82,19 @@ Copyright by Frank Dase (2022)<br/><br/>
 <input type="file" id="fileUpload" onchange="getPath(this.files)">
 
 <div id="output"></div>
-
+<div id="modal">
+	<div class="modalHeader"><span class="modalClose" onclick="closeModal()">X</span><span class="modalTitle"></span></div>
+	<div class="modalContent"></div>
+</div>
 <script>
-
+	const modal = document.getElementById('modal');
+	let questionsArray = [];
 	const pickDoublicates = async (json) => {
 		const container = document.getElementById("output");
-		const questionsArray = [];
+		questionsArray = [];
 		const resultsArray = [];
+		
+		
 		let count = 0;
 
 		// convert json to a better readable format
@@ -82,8 +130,8 @@ Copyright by Frank Dase (2022)<br/><br/>
 							if(index1 === -1 || index2 === -1)
 							{
 								output += "<tr>";
-								output += "<td><div class='id'>" + item.id + "</div><div class='question'>" + question + "</div></td>";
-								output += "<td><div class='id'>" + i.id + "</div><div class='question'>" + i.questions[index] + "</div></td>";
+								output += "<td><div class='id' onclick='openModal(this)' title='show all questions of this ID'>" + item.id + "</div><div class='question'>" + question + "</div></td>";
+								output += "<td><div class='id' onclick='openModal(this)'  title='show all questions of this ID'>" + i.id + "</div><div class='question'>" + i.questions[index] + "</div></td>";
 								output += "</tr>";
 								resultsArray.push({id:item.id, question: question});
 								resultsArray.push({id:i.id , question: i.questions[index]});	
@@ -122,7 +170,40 @@ Copyright by Frank Dase (2022)<br/><br/>
 		let json = JSON.parse(str);
 		 pickDoublicates(json);
 	}
-	//readJson();
+	const openModal = (el) =>
+	{   
+		modal.style.display = "block";
+		const header = modal.getElementsByClassName("modalTitle");
+		const modalContent = modal.getElementsByClassName("modalContent");
+		const offset = el.getBoundingClientRect();
+		
+		modal.style.left = parseInt(offset.left)+"px";
+		modal.style.top = parseInt(offset.top)+ window.scrollY +"px";
+		modal.style.width = offset.width + "px";
+		let id = el.innerHTML;
+		header[0].innerHTML = el.innerHTML;
+		modalContent[0].innerHTML = "";
+
+		questionsArray.map(item => {
+			
+			if(item.id == id)
+			{
+				console.log(item.id, id);
+				console.log("equal");
+				item.questions.map(question => {
+					console.log(question);
+					modalContent[0].innerHTML += `<div>${question}</div>`;
+					
+				});
+			}
+		});
+	}
+	const closeModal = () => {
+		modal.style.display = "none";
+	}
+	onload = ( ()=> {
+		closeModal();
+	});
 </script>
 
 </body>
