@@ -78,7 +78,7 @@ Copyright by Frank Dase (2022)<br/><br/>
 							var index1 = resultsArray.findIndex(e => e.id === item.id && e.question == question);
 							var index2 = resultsArray.findIndex(e => e.id === i.id && e.question == i.questions[index]);
 
-							if(index1 === -1 && index2 === -1)
+							if(index1 === -1 || index2 === -1)
 							{
 								output += "<tr>";
 								output += "<td><div class='id'>" + item.id + "</div><div class='question'>" + question + "</div></td>";
