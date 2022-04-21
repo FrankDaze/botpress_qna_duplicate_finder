@@ -47,6 +47,7 @@ Copyright by Frank Dase (2022)<br/><br/>
 		const container = document.getElementById("output");
 		const questionsArray = [];
 		const resultsArray = [];
+		let count = 0;
 
 		// convert json to a better readable format
 		json.qnas.forEach((item) => {
@@ -61,7 +62,7 @@ Copyright by Frank Dase (2022)<br/><br/>
 
 		// check data and show result
 		let output = "<hr>";
-		output += "<h2>Results</h2>";
+		output += "<h2 id='results'>Results</h2>";
 		output +=   "<table >";
 
 		questionsArray.map(item => {
@@ -86,6 +87,7 @@ Copyright by Frank Dase (2022)<br/><br/>
 								output += "</tr>";
 								resultsArray.push({id:item.id, question: question});
 								resultsArray.push({id:i.id , question: i.questions[index]});	
+								count++;
 							}
 
 						}
@@ -97,7 +99,7 @@ Copyright by Frank Dase (2022)<br/><br/>
 		output += "</table>";
 		
 		container.innerHTML = output;
-		
+		document.getElementById("results").innerHTML = document.getElementById("results").innerHTML + " (" + count + ")";
 	}
 	const getPath = (file) => {
 		// Stop the form from reloading the page
