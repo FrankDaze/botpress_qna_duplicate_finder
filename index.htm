@@ -46,6 +46,7 @@ Copyright by Frank Dase (2022)<br/><br/>
 	const pickDoublicates = async (json) => {
 		const container = document.getElementById("output");
 		const questionsArray = [];
+		const resultsArray = [];
 
 		// convert json to a better readable format
 		json.qnas.forEach((item) => {
@@ -66,15 +67,27 @@ Copyright by Frank Dase (2022)<br/><br/>
 		questionsArray.map(item => {
 			item.questions.map(question => {
 				questionsArray.map(i => {
+
 					const index = i.questions.indexOf(question);
+
 					if(index>-1)
 					{
-						if(item.id  !== i.id)
+						if(item.id !== i.id)
 						{
-							output += "<tr>";
-							output += "<td><div class='id'>" + item.id + "</div><div class='question'>" + question + "</div></td>";
-							output += "<td><div class='id'>" + i.id + "</div><div class='question'>" + i.questions[index] + "</div></td>";
-							output += "</tr>";
+							// show result only one time
+							var index1 = resultsArray.findIndex(e => e.id === item.id && e.question == question);
+							var index2 = resultsArray.findIndex(e => e.id === i.id && e.question == i.questions[index]);
+
+							if(index1 === -1 && index2 === -1)
+							{
+								output += "<tr>";
+								output += "<td><div class='id'>" + item.id + "</div><div class='question'>" + question + "</div></td>";
+								output += "<td><div class='id'>" + i.id + "</div><div class='question'>" + i.questions[index] + "</div></td>";
+								output += "</tr>";
+								resultsArray.push({id:item.id, question: question});
+								resultsArray.push({id:i.id , question: i.questions[index]});	
+							}
+
 						}
 					
 					}
@@ -89,10 +102,10 @@ Copyright by Frank Dase (2022)<br/><br/>
 	const getPath = (file) => {
 		// Stop the form from reloading the page
 		event.preventDefault();
-		console.log(file[0].size);
+
 		// If there's no file, do nothing
 		if (!file[0].size) return;
-		console.log("reading file");
+		
 		// Create a new FileReader() object
 		let reader = new FileReader();
 
